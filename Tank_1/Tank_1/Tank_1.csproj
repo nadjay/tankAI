@@ -58,6 +58,7 @@
     <Compile Include="AI\NodeType.cs" />
     <Compile Include="AI\PathFinder.cs" />
     <Compile Include="AI\Point.cs" />
+    <Compile Include="Game.cs" />
     <Compile Include="Map.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

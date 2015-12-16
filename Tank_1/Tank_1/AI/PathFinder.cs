@@ -87,7 +87,7 @@ namespace Tank_1.AI
             openList.Clear();
             closedList.Clear();
             path_calculated = false;
-            Stack<Node> path;
+            Stack<Point> path;
             currentDirection = clientMap.Client.getcDirection();
 
             switch (mode)
@@ -126,7 +126,7 @@ namespace Tank_1.AI
                 analyzeNeighbours();
             }
             this.path = findPath();
-            return path;
+            return this.path;
         }
 
         public void analyzeNeighbours()
@@ -169,7 +169,148 @@ namespace Tank_1.AI
         }
 
         public void analyzeNode(Node current, Node neighbor){
-            if (neighbor.Walkable)
+            if (neighbor.Walkable && !closedList.Contains(neighbor))
+            {
+                int g = current.G + neighbor.Type + RotationalDelay(current, neighbor);
+                int h = calculate_H(neighbor);
+
+                if (g < neighbor.G || !openList.Contains(neighbor))
+                {
+                    neighbor.G = g;
+                    neighbor.H = h;
+                    neighbor.Parent = current;
+                    setDirection(neighbor);
+
+                    if (!openList.Contains(neighbor))
+                    {
+                        openList.Add(neighbor);
+                    }
+                    
+                }               
+            }
+        }
+
+        public int RotationalDelay(Node current, Node next){
+            int delay = 0;
+            if (current.StartDirection == DirectionConstant.Down)
+            {
+                if (current.X != next.X || current.Y > next.Y)
+                {
+                    delay = NodeType.empty;
+                }
+            }
+            if (current.StartDirection == DirectionConstant.Up)
+            {
+                if (current.X != next.X || current.Y < next.Y)
+                {
+                    delay = NodeType.empty;
+                }
+            }
+            
+            if(current.StartDirection == DirectionConstant.Right){
+                if(current.Y != next.Y || current.X > next.X){
+                    delay = NodeType.empty;
+                }
+            }
+            if(current.StartDirection == DirectionConstant.Left){
+                if(current.Y != next.Y || current.X < next.X){
+                    delay = NodeType.empty;
+                }
+            }
+            return delay;
+        }
+
+        public int calculate_H(Node node)
+        {
+            int xLength = Math.Abs(endX - node.X);
+            int yLength = Math.Abs(endY - node.Y);
+            return xLength + yLength;
+        }
+
+        public void setDirection(Node node)
+        {
+            Node parent = node.Parent;
+            if (parent == null)
+            {
+                node.StartDirection = currentDirection;
+            }
+            if (node.X > parent.X)
+            {
+                node.StartDirection = DirectionConstant.Right;
+            }
+            if (node.X < node.Y)
+            {
+                node.StartDirection = DirectionConstant.Left;
+            }
+            if (node.Y > parent.Y)
+            {
+                node.StartDirection = DirectionConstant.Down;
+            }
+            if (node.Y < parent.Y)
+            {
+                node.StartDirection = DirectionConstant.Up;
+            }
+        }
+
+        public void sortList(List<Node> list)
+        {
+            list.Sort(sortListByFValue);
+        }
+
+        public int sortListByFValue(Node node_1, Node node_2)
+        {
+            int return_value = 0;
+            return_value = node_1.F - node_2.F;
+            if (return_value == 0)
+            {
+                return_value = node_1.G - node_2.G;
+            }
+            if (return_value == 0)
+            {
+                return_value = node_1.H - node_2.H;
+            }
+            return return_value;
+        }
+
+        public Stack<Point> findPath()
+        {
+            Stack<Point> path = new Stack<Point>();
+            Node node = map[endX, endY];  //get target
+            while (node != null && !(node.X == startX && node.Y == startY))
+            {
+                Point point = new Point(node.X, node.Y);
+                point.start_direction = node.StartDirection;
+                point.end_direction = node.EndDirection;
+                path.Push(point);
+                node = node.Parent;
+            }
+            return path;
+        }
+
+        public Stack<Cell> calculateShortestPath(Cell target, Cell current)
+        {
+            this.startX = current.x;
+            this.startY = current.y;
+            this.endX = current.x;
+            this.endY = current.y;
+
+            Stack<Point> point_path = findShortestPath();
+            Stack<Cell> temp = new Stack<Cell>();
+            foreach (Point p in point_path)
+            {
+                Cell c = new Cell();
+                c.x = p.x;
+                c.y = p.y;
+                temp.Push(c);
+            }
+
+            Stack<Cell> cell_path = new Stack<Cell>();      //to reverse the stack
+            foreach (Cell cell in temp)
+            {
+                cell_path.Push(cell);
+            }
+
+            return cell_path;
         }
     }
 }

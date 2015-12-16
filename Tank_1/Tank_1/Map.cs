@@ -66,6 +66,20 @@ namespace Tank_1
                 client = value;
             }
         }
+
+        public Map()
+        {
+            tanks = new List<Player>();
+            bricks = new List<Brick>();
+            lifePacks = new List<LifePack>();
+            coinPiles = new List<Coin>();
+            stones = new List<Stone>();
+            waterPits = new List<Water>();
+            bullets = new List<Bullet>();
+            freeCells = new List<Block>();
+            Client = new Player();
+
+        }
         /*public String ClientID
         {
             get

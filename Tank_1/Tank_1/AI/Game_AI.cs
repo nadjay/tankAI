@@ -379,6 +379,7 @@ namespace Tank_1.AI
             {
                 Target = getCurrentCell();
             }
+
         }
        
        
