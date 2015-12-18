@@ -15,9 +15,10 @@ namespace Tank_1.AI
         List<Node> openList, closedList;
         Game_AI.Mode mode;
         Stack<Point> path;
-        int pathLength;
+        //int pathLength;
         DirectionConstant currentDirection;
-        bool path_calculated;
+        public bool finished_calculation;
+        //public bool path_does_not_exists;
 
         public PathFinder(Map map)
         {
@@ -44,12 +45,12 @@ namespace Tank_1.AI
                         if (actor.GetType() == typeof(Brick))
                         {
                             node.Type = NodeType.brick;
-                            node.Walkable = true;
+                            node.Walkable = false;
                         }
                         else if (actor.GetType() == typeof(Player))
                         {
                             node.Type = NodeType.tank;
-                            node.Walkable = true;
+                            node.Walkable = false;
                         }
                         else if (actor.GetType() == typeof(Coin))
                         {
@@ -86,8 +87,7 @@ namespace Tank_1.AI
         {
             openList.Clear();
             closedList.Clear();
-            path_calculated = false;
-            Stack<Point> path;
+            finished_calculation = false;
             currentDirection = clientMap.Client.getcDirection();
 
             switch (mode)
@@ -116,63 +116,71 @@ namespace Tank_1.AI
             //generates the client map for path finding
             generateMap();
 
-            startX = clientMap.Client.getxCordinate();
-            clientMap.Client.getyCordinate();
+            //startX = clientMap.Client.getxCordinate();
+            //startY = clientMap.Client.getyCordinate();
 
-            openList.Add(map[startX, startY]);
+            openList.Add(map[startX, startY]); //add the current cordinate to the openlist
 
-            while (!path_calculated)
+            while (openList.Count>0)//(!finished_calculation && !path_does_not_exists)
             {
                 analyzeNeighbours();
             }
+            
             this.path = findPath();
             return this.path;
+            
         }
 
         public void analyzeNeighbours()
         {
-            if (openList.Count() == 0)
+            /*if (openList.Count() == 0) //no path exists
             {
-                path_calculated = true;
+                finished_calculation = true;
+                path_does_not_exists = true;
+
+                //should stop the while loop from here
             }
-            Node currentNode = openList.ElementAt(0);
-            if (!openList.Remove(currentNode))
-            {
-                throw new InvalidOperationException("Node not found in the list");
-            }
-            closedList.Add(currentNode);
-            if (currentNode.X == endX && currentNode.Y == endY)
-            {
-                path_calculated = true;
-            }
-            if (currentNode.X - 1 >= 0)
-            {
-                Node neighbor = map[currentNode.X - 1, currentNode.Y];
-                analyzeNode(currentNode, neighbor);
-            }
-            if (currentNode.X + 1 <= width)
-            {
-                Node neighbor = map[currentNode.X + 1, currentNode.Y];
-                analyzeNode(currentNode, neighbor);
-            }
-            if (currentNode.Y - 1 >= 0)
-            {
-                Node neighbor = map[currentNode.X , currentNode.Y-1];
-                analyzeNode(currentNode, neighbor);
-            }
-            if (currentNode.Y + 1 >= 0)
-            {
-                Node neighbor = map[currentNode.X , currentNode.Y+1];
-                analyzeNode(currentNode, neighbor);
-            }
-            sortList(openList);
+            else
+            {*/
+                Node currentNode = openList.ElementAt(0);
+                if (!openList.Remove(currentNode))
+                {
+                    throw new InvalidOperationException("Node not found in the list");
+                }
+                closedList.Add(currentNode);
+                if (currentNode.X == endX && currentNode.Y == endY)
+                {
+                    finished_calculation = true;
+                }
+                if (currentNode.X - 1 >= 0)
+                {
+                    Node neighbor = map[currentNode.X - 1, currentNode.Y];
+                    analyzeNode(currentNode, neighbor);
+                }
+                if (currentNode.X + 1 < width)
+                {
+                    Node neighbor = map[currentNode.X + 1, currentNode.Y];
+                    analyzeNode(currentNode, neighbor);
+                }
+                if (currentNode.Y - 1 >= 0)
+                {
+                    Node neighbor = map[currentNode.X, currentNode.Y - 1];
+                    analyzeNode(currentNode, neighbor);
+                }
+                if (currentNode.Y + 1 < height)
+                {
+                    Node neighbor = map[currentNode.X, currentNode.Y + 1];
+                    analyzeNode(currentNode, neighbor);
+                }
+                sortList(openList);
+            //}
         }
 
         public void analyzeNode(Node current, Node neighbor){
             if (neighbor.Walkable && !closedList.Contains(neighbor))
             {
-                int g = current.G + neighbor.Type + RotationalDelay(current, neighbor);
-                int h = calculate_H(neighbor);
+                int g = current.G + neighbor.Type + RotationalDelay(current, neighbor);  //g value--> the distance from the start
+                int h = calculate_H(neighbor);                                           //h value means --> distance from the end 
 
                 if (g < neighbor.G || !openList.Contains(neighbor))
                 {
@@ -276,7 +284,8 @@ namespace Tank_1.AI
         {
             Stack<Point> path = new Stack<Point>();
             Node node = map[endX, endY];  //get target
-            while (node != null && !(node.X == startX && node.Y == startY))
+            Console.WriteLine("end " + endX + endY);
+            while (node != null && !(node.X == startX && node.Y == startY))  // if a target is available and we are not on the target cell or we are at thebegining
             {
                 Point point = new Point(node.X, node.Y);
                 point.start_direction = node.StartDirection;
@@ -291,26 +300,27 @@ namespace Tank_1.AI
         {
             this.startX = current.x;
             this.startY = current.y;
-            this.endX = current.x;
-            this.endY = current.y;
+            this.endX = target.x;
+            this.endY = target.y;
 
             Stack<Point> point_path = findShortestPath();
-            Stack<Cell> temp = new Stack<Cell>();
-            foreach (Point p in point_path)
-            {
-                Cell c = new Cell();
-                c.x = p.x;
-                c.y = p.y;
-                temp.Push(c);
-            }
+                Stack<Cell> temp = new Stack<Cell>();
+                foreach (Point p in point_path)
+                {
+                    Cell c = new Cell();
+                    c.x = p.x;
+                    c.y = p.y;
 
-            Stack<Cell> cell_path = new Stack<Cell>();      //to reverse the stack
-            foreach (Cell cell in temp)
-            {
-                cell_path.Push(cell);
-            }
+                    temp.Push(c);
+                }
 
-            return cell_path;
+                Stack<Cell> cell_path = new Stack<Cell>();      //to reverse the stack
+                foreach (Cell cell in temp)
+                {
+                    cell_path.Push(cell);
+                }
+
+                return cell_path;
         }
     }
 }

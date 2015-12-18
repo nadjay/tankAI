@@ -1,1 +1,6 @@
 c:\users\toshiba\documents\visual studio 2013\Projects\Tank_1\Tank_1\obj\Debug\Tank_1.csprojResolveAssemblyReference.cache
+C:\Users\TOSHIBA\Documents\GitHub\tankAI\Tank_1\Tank_1\bin\Debug\Tank_1.exe
+C:\Users\TOSHIBA\Documents\GitHub\tankAI\Tank_1\Tank_1\bin\Debug\Tank_1.pdb
+C:\Users\TOSHIBA\Documents\GitHub\tankAI\Tank_1\Tank_1\obj\Debug\Tank_1.csprojResolveAssemblyReference.cache
+C:\Users\TOSHIBA\Documents\GitHub\tankAI\Tank_1\Tank_1\obj\Debug\Tank_1.exe
+C:\Users\TOSHIBA\Documents\GitHub\tankAI\Tank_1\Tank_1\obj\Debug\Tank_1.pdb

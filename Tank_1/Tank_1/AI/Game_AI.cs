@@ -16,7 +16,7 @@ namespace Tank_1.AI
         private Mode mode;
         private Map map;
         int criticalHealth = 50;
-        private Stack<Cell> path;
+        //private Stack<Cell> path;
         public bool targetComputed = false;
         private Cell target;
         //should implement pathfinder
@@ -255,7 +255,7 @@ namespace Tank_1.AI
             foreach (Cell coinPile in coinPileTargets)
             {
                 calculated_distance = getDistance(cell, coinPile);
-                if (calculated_distance < distance && (calculated_distance/map.Client.Speed)<coinPile.life)
+                if (calculated_distance < distance )//&& (calculated_distance/map.Client.Speed)<coinPile.life)
                 {
                     distance = calculated_distance;
                     target = coinPile;

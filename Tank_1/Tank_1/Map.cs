@@ -48,12 +48,12 @@ namespace Tank_1
             get;
             set;
         }
-        public const int MAP_WIDTH = 10, MAP_HEIGHT = 10;
+        public const int MAP_WIDTH = 4, MAP_HEIGHT = 4;
         private Player client;
        // private String clientID;
        // private int clientX, clientY;
         //DirectionConstant clientDirection;
-        bool joined;
+        //bool joined;
 
         public Player Client
         {
@@ -67,7 +67,7 @@ namespace Tank_1
             }
         }
 
-        public Map()
+        public Map(Player player)
         {
             tanks = new List<Player>();
             bricks = new List<Brick>();
@@ -77,7 +77,7 @@ namespace Tank_1
             waterPits = new List<Water>();
             bullets = new List<Bullet>();
             freeCells = new List<Block>();
-            Client = new Player();
+            Client = player;
 
         }
         /*public String ClientID

@@ -12,7 +12,7 @@ namespace Tank_1
         int coins;
         int points;
         int health;
-        DirectionConstant cDirection;
+        //DirectionConstant cDirection;
         String whetherShot;
         long speed;
 
